@@ -83,7 +83,6 @@ const uploadToCloudinary = (buffer) => {
 };
 
 
-
 app.post(
   "/register",
   upload.fields([
@@ -95,58 +94,84 @@ app.post(
   ]),
   async (req, res) => {
     try {
+      console.log(req.files);
+      console.log(req.body);
+
       const passportPhoto =
-        await uploadToCloudinary(
-          req.files.passportPhoto[0].buffer
-        );
+        req.files?.passportPhoto?.[0]
+          ? await uploadToCloudinary(
+              req.files.passportPhoto[0]
+                .buffer
+            )
+          : null;
 
       const verificationProof1 =
-        await uploadToCloudinary(
-          req.files.verificationProof1[0]
-            .buffer
-        );
+        req.files?.verificationProof1?.[0]
+          ? await uploadToCloudinary(
+              req.files
+                .verificationProof1[0]
+                .buffer
+            )
+          : null;
 
       const verificationProof2 =
-        await uploadToCloudinary(
-          req.files.verificationProof2[0]
-            .buffer
-        );
+        req.files?.verificationProof2?.[0]
+          ? await uploadToCloudinary(
+              req.files
+                .verificationProof2[0]
+                .buffer
+            )
+          : null;
 
       const studentDeclaration =
-        await uploadToCloudinary(
-          req.files.studentDeclaration[0]
-            .buffer
-        );
+        req.files?.studentDeclaration?.[0]
+          ? await uploadToCloudinary(
+              req.files
+                .studentDeclaration[0]
+                .buffer
+            )
+          : null;
 
       const parentDeclaration =
-        await uploadToCloudinary(
-          req.files.parentDeclaration[0]
-            .buffer
-        );
+        req.files?.parentDeclaration?.[0]
+          ? await uploadToCloudinary(
+              req.files
+                .parentDeclaration[0]
+                .buffer
+            )
+          : null;
 
-      const data = new Registration({
-        ...req.body,
-        course: JSON.parse(req.body.course),
+      const data =
+        new Registration({
+          ...req.body,
+          course: req.body.course
+            ? JSON.parse(req.body.course)
+            : [],
 
-        passportPhoto,
-        verificationProof1,
-        verificationProof2,
-        studentDeclaration,
-        parentDeclaration,
-      });
+          passportPhoto,
+          verificationProof1,
+          verificationProof2,
+          studentDeclaration,
+          parentDeclaration,
+        });
 
       await data.save();
 
       res.json({
         success: true,
-        message: "Saved Successfully",
+        message:
+          "Saved Successfully",
         data,
       });
     } catch (err) {
-      console.log(err);
+      console.error(
+        "REGISTER ERROR:",
+        err
+      );
 
       res.status(500).json({
         success: false,
+        message: err.message,
       });
     }
   }
