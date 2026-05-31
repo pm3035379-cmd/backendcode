@@ -6,7 +6,14 @@ const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://gandhicommunitycollege-registration.vercel.app",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 mongoose.connect(
